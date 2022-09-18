@@ -5,8 +5,7 @@ import {
   Delete,
   Get,
   Injectable,
-  Param,
-  Patch,
+  Param, Patch,
   Post,
   UploadedFile,
   UseGuards,
@@ -19,9 +18,12 @@ import { unlink } from 'node:fs/promises';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { Roles } from 'src/guards/roles.decorator';
 import { RolesGuard } from 'src/guards/roles.guard';
+import { ImageFileFilter } from 'src/helpers/image.validation';
 import { renamefile } from 'src/helpers/renamefile';
+import { UpdateUserDTO } from 'src/user/dto/updateUser.dto';
 import { Repository } from 'typeorm';
 import { AdminService } from './adminService';
+import { StoreProduct } from './dto/store.dto';
 import { Product } from './entities/product.entity';
 
   @Controller('admin')
@@ -42,12 +44,12 @@ import { Product } from './entities/product.entity';
     @Post('/store')
     @UseGuards(AuthGuard,RolesGuard)
     @Roles('admin')
-    @UseInterceptors(FileInterceptor('image', { storage:diskStorage({destination: './public/uploads',
+    @UseInterceptors(FileInterceptor('image', {fileFilter:ImageFileFilter, storage:diskStorage({destination: './public/uploads',
     filename:renamefile
     })
   }))
     async store(
-      @Body() body,
+      @Body() body:StoreProduct,
       @UploadedFile() file: Express.Multer.File,
     ) {
       const filenameConverted = 'localhost:4000/'+file.filename
@@ -71,7 +73,7 @@ import { Product } from './entities/product.entity';
 
 
 
-    @UseInterceptors(FileInterceptor('image', { storage:diskStorage({destination: './public/uploads',
+    @UseInterceptors(FileInterceptor('image', {fileFilter:ImageFileFilter, storage:diskStorage({destination: './public/uploads',
     filename:renamefile
     })
   }))
@@ -79,7 +81,7 @@ import { Product } from './entities/product.entity';
     @UseGuards(AuthGuard,RolesGuard)
     @Roles('admin')
     async update(
-      @Body() body,
+      @Body() body:UpdateUserDTO,
       @UploadedFile() file: Express.Multer.File,
       @Param('id') id: number,
     ) {

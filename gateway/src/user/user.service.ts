@@ -2,29 +2,12 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom, map } from 'rxjs';
 import { CreateUserDTO } from './dto/createUser.dto';
-import { loginUserDTO } from './dto/loginUser.dto';
 
 @Injectable()
 export class UserService {
   constructor(
     @Inject('USERS_SERVICE') private readonly usersClient: ClientProxy,
   ) {}
-
-  async login(body: loginUserDTO) {
-    const result = await lastValueFrom(
-      this.usersClient.send({ cmd: 'loginUser' }, body).pipe(
-        map((res) => {
-          return res;
-        }),
-      ),
-    );
-    try {
-      return result;
-    } catch (error) {
-      return error;
-    }
-  }
-
   async getById(id) {
     const result = await lastValueFrom(
       this.usersClient.send({ cmd: 'userId' }, id).pipe(

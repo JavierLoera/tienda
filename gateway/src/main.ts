@@ -17,7 +17,6 @@ async function bootstrap() {
       cookie: { maxAge: 600 }
     }),
   );
- 
   Logger.log('Gateway listening on port:' + 4000)
 
 }
